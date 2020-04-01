@@ -32,3 +32,5 @@
 en:
   users:
     not_found: 'User not found'
+  subscription:
+    already_exists: "Subscription already exists"
