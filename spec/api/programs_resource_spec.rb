@@ -36,7 +36,7 @@ RSpec.describe ProgramsResource, type: :request do
         expect(response.body).to_not include program_without_search_string.title
       end
       it 'returns all programs with search string sorted by :users_count' do
-        expect(JSON.parse(response.body)).to eq sorted_by_rating(found_programs).map(&:attributes)
+        expect(json_body).to eq sorted_by_rating(found_programs).map(&:attributes)
       end
       it 'returns status 200' do
         expect(response).to have_http_status(200)
@@ -46,7 +46,7 @@ RSpec.describe ProgramsResource, type: :request do
       before { request }
 
       it "returns 'not found' message if no found results" do
-        expect(JSON.parse(response.body)).to eq I18n.t('programs.not_found')
+        expect(json_body).to eq I18n.t('programs.not_found')
       end
 
       it 'returns status 200' do

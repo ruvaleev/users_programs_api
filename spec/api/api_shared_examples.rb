@@ -16,7 +16,7 @@ RSpec.shared_examples 'creates_new_instance' do |instance_class|
   end
   it "returns #{instance_class.name.downcase} as json in body" do
     request
-    expect(JSON.parse(response.body)).to eq instance_class.last.as_json
+    expect(json_body).to eq instance_class.last.as_json
   end
 end
 
@@ -33,7 +33,7 @@ RSpec.shared_examples 'reports_about_conflict' do |instance_class|
     expect(response).to have_http_status(409)
   end
   it 'returns error message as json' do
-    expect(JSON.parse(response.body)).to eq error_message
+    expect(json_body).to eq error_message
   end
 end
 
@@ -45,6 +45,6 @@ RSpec.shared_examples 'reports_about_not_found' do |error|
     expect(response).to have_http_status(404)
   end
   it "returns 'not found' message" do
-    expect(JSON.parse(response.body)).to eq error_message
+    expect(json_body).to eq error_message
   end
 end

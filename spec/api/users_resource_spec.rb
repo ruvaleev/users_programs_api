@@ -44,7 +44,7 @@ RSpec.describe UsersResource, type: :request do
       before { request }
 
       it 'returns user as json in body' do
-        expect(JSON.parse(response.body)).to eq user.as_json
+        expect(json_body).to eq user.as_json
       end
       it 'returns successful status' do
         expect(response).to have_http_status(:success)
@@ -63,16 +63,19 @@ RSpec.describe UsersResource, type: :request do
     let(:user) { create(:user) }
 
     context 'when user subscribed' do
-      let(:subscribed_programs) { create_list(:program, 2) }
+      let(:active_subscribed_programs) { create_list(:program, 2) }
+      let(:inactive_subscribed_program) { create(:program) }
+      let(:subscribed_programs) { active_subscribed_programs + [inactive_subscribed_program] }
       let(:unsubscribed_program) { create(:program) }
 
       before do
         user.programs << subscribed_programs
+        user.subscriptions.find_by(program: inactive_subscribed_program).update(active: false)
         request
       end
 
-      it 'returns all programs provided user subscribed to' do
-        expect(subscribed_programs.map { |program| response.body.include?(program.to_json) }.uniq).to eq [true]
+      it 'returns all active programs provided user subscribed to' do
+        expect(json_body).to eq active_subscribed_programs.map(&:attributes)
       end
       it "doesn't return programs provided user not subscribed to" do
         expect(response.body.include?(unsubscribed_program.to_json)).to be_falsy
@@ -94,6 +97,27 @@ RSpec.describe UsersResource, type: :request do
     context 'when user not found' do
       let(:params) { { id: 0 } }
       it_behaves_like 'reports_about_not_found', I18n.t('users.not_found')
+    end
+  end
+
+  describe 'PATCH users/ban' do
+    subject(:request) { patch 'users/ban', params: params }
+
+    let(:params) { { program_id: subscription.program_id, user_id: subscription.user_id } }
+    let(:subscription) { create(:subscription) }
+
+    context 'when subscription found' do
+      it 'deactivates subscription' do
+        expect { request }.to change { subscription.reload.active? }.from(true).to(false)
+      end
+      it 'returns status 200' do
+        request
+        expect(response).to have_http_status(200)
+      end
+    end
+    context 'when user not found' do
+      let(:params) { { program_id: 0, user_id: 0 } }
+      it_behaves_like 'reports_about_not_found', I18n.t('subscription.not_found')
     end
   end
 end

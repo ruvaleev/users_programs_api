@@ -33,8 +33,19 @@ class UsersResource < Grape::API
     end
 
     get '/subscriptions' do
-      user = User.find_by(params)&.programs
-      user.as_json || error!(I18n.t('users.not_found'), 404)
+      User.find_by(params)&.active_programs&.as_json || error!(I18n.t('users.not_found'), 404)
+    end
+
+    desc 'Ban user in program'
+
+    params do
+      requires :program_id, type: Integer, desc: "Program's id"
+      requires :user_id, type: Integer, desc: "User's id"
+    end
+
+    patch '/ban' do
+      subscription = Subscription.find_by(params)
+      subscription&.update(active: false) || error!(I18n.t('subscription.not_found'), 404)
     end
   end
 end
