@@ -52,16 +52,48 @@ RSpec.describe UsersResource, type: :request do
     end
 
     context 'when user is not found' do
-      let(:error_message) { { 'error' => I18n.t('users.not_found') } }
+      it_behaves_like 'reports_about_not_found', I18n.t('users.not_found')
+    end
+  end
 
+  describe 'GET users/subscriptions' do
+    subject(:request) { get 'users/subscriptions', params: params }
+
+    let(:params) { { id: user.id } }
+    let(:user) { create(:user) }
+
+    context 'when user subscribed' do
+      let(:subscribed_programs) { create_list(:program, 2) }
+      let(:unsubscribed_program) { create(:program) }
+
+      before do
+        user.programs << subscribed_programs
+        request
+      end
+
+      it 'returns all programs provided user subscribed to' do
+        expect(subscribed_programs.map { |program| response.body.include?(program.to_json) }.uniq).to eq [true]
+      end
+      it "doesn't return programs provided user not subscribed to" do
+        expect(response.body.include?(unsubscribed_program.to_json)).to be_falsy
+      end
+      it 'returns successful status' do
+        expect(response).to have_http_status(:success)
+      end
+    end
+    context 'when user has no subscriptions' do
       before { request }
 
-      it 'returns 404 status' do
-        expect(response).to have_http_status(404)
+      it 'returns empty array if user have no subscriptions' do
+        expect(response.body).to eq '[]'
       end
-      it "returns 'not found' message" do
-        expect(JSON.parse(response.body)).to eq error_message
+      it 'returns successful status' do
+        expect(response).to have_http_status(:success)
       end
+    end
+    context 'when user not found' do
+      let(:params) { { id: 0 } }
+      it_behaves_like 'reports_about_not_found', I18n.t('users.not_found')
     end
   end
 end

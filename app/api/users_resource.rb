@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class UsersResource < Grape::API
-  namespace :users do
+  namespace :users do # rubocop:disable Metrics/BlockLength
     desc 'Create users'
 
     params do
@@ -23,6 +23,17 @@ class UsersResource < Grape::API
 
     get '/' do
       user = User.find_by(params.select { |_key, value| value.present? })
+      user.as_json || error!(I18n.t('users.not_found'), 404)
+    end
+
+    desc 'Get subscriptions'
+
+    params do
+      requires :id, type: Integer, desc: "User's id"
+    end
+
+    get '/subscriptions' do
+      user = User.find_by(params)&.programs
       user.as_json || error!(I18n.t('users.not_found'), 404)
     end
   end

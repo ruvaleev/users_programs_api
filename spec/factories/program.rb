@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :program do
-    title { FFaker::Lorem.word }
+    sequence :title do |n| "#{FFaker::Lorem.word} #{n}" end
     description { FFaker::Lorem.sentence }
   end
 end

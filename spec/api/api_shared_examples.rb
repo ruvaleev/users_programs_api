@@ -36,3 +36,15 @@ RSpec.shared_examples 'reports_about_conflict' do |instance_class|
     expect(JSON.parse(response.body)).to eq error_message
   end
 end
+
+RSpec.shared_examples 'reports_about_not_found' do |error|
+  let(:error_message) { { 'error' => error } }
+  before { request }
+
+  it 'returns 404 status' do
+    expect(response).to have_http_status(404)
+  end
+  it "returns 'not found' message" do
+    expect(JSON.parse(response.body)).to eq error_message
+  end
+end
