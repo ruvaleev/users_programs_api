@@ -18,7 +18,7 @@ ActiveRecord::Schema.define(version: 2020_04_01_020900) do
     t.integer "users_count", default: 0
   end
 
-  create_table "subscriptions", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "subscriptions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "program_id"
     t.index ["program_id"], name: "index_subscriptions_on_program_id"

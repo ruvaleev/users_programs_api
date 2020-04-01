@@ -1,25 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-
-RSpec.shared_examples 'creates_new_user' do
-  it 'creates one new user' do
-    expect { request }.to change(User, :count).by(1)
-  end
-  it 'create user with appropriate params' do
-    request
-    user = User.last
-    expect([user.email, user.name]).to eq params.values
-  end
-  it 'returns successful status' do
-    request
-    expect(response).to have_http_status(:success)
-  end
-  it 'returns user as json in body' do
-    request
-    expect(JSON.parse(response.body)).to eq User.last.as_json
-  end
-end
+require_relative 'api_shared_examples'
 
 RSpec.describe UsersResource, type: :request do
   before do
@@ -34,24 +16,17 @@ RSpec.describe UsersResource, type: :request do
     let(:params) { { email: email, name: name } }
 
     context "when user doesn't exist yet" do
-      it_behaves_like 'creates_new_user'
+      it_behaves_like 'creates_new_instance', User
     end
     context 'when user with the same name exists already' do
       let!(:user) { create(:user, name: name) }
-      it_behaves_like 'creates_new_user'
+      it_behaves_like 'creates_new_instance', User
     end
 
     context 'when user with same email found' do
-      let!(:user) { create(:user, email: email) }
-      let(:error_message) { { 'email' => ['has already been taken'] } }
-
-      before { request }
-
-      it 'returns 409 status' do
-        expect(response).to have_http_status(409)
-      end
-      it "returns user's messages as json" do
-        expect(JSON.parse(response.body)).to eq error_message
+      it_behaves_like 'reports_about_conflict', User do
+        let(:instance) { create(:user, email: email) }
+        let(:error_message) { { 'email' => ['has already been taken'] } }
       end
     end
   end

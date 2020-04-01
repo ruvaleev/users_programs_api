@@ -10,6 +10,7 @@ class API < Grape::API
 
   mount UsersResource
   mount ProgramsResource
+  mount SubscriptionsResource
 
   add_swagger_documentation format: :json,
                             hide_documentation_path: true,
