@@ -55,4 +55,38 @@ RSpec.describe UsersResource, type: :request do
       end
     end
   end
+
+  describe 'GET users/' do
+    subject(:request) { get 'users/', params: params }
+
+    let(:email) { FFaker::Internet.email }
+    let(:name) { FFaker::Name.name }
+    let(:params) { { email: email, name: name } }
+
+    context 'when user found' do
+      let!(:user) { create(:user, params) }
+
+      before { request }
+
+      it 'returns user as json in body' do
+        expect(JSON.parse(response.body)).to eq user.as_json
+      end
+      it 'returns successful status' do
+        expect(response).to have_http_status(:success)
+      end
+    end
+
+    context 'when user is not found' do
+      let(:error_message) { { 'error' => I18n.t('users.not_found') } }
+
+      before { request }
+
+      it 'returns 404 status' do
+        expect(response).to have_http_status(404)
+      end
+      it "returns 'not found' message" do
+        expect(JSON.parse(response.body)).to eq error_message
+      end
+    end
+  end
 end
