@@ -9,6 +9,7 @@ class API < Grape::API
   before { header 'Content-Type', 'application/json; charset=utf-8' }
 
   mount UsersResource
+  mount ProgramsResource
 
   add_swagger_documentation format: :json,
                             hide_documentation_path: true,
