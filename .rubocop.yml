@@ -20,3 +20,7 @@ Metrics/BlockLength:
 Lint/AmbiguousBlockAssociation:
   Exclude:
     - 'spec/**/*.rb'
+
+Style/BlockDelimiters:
+  Exclude:
+    - 'spec/factories/*.rb'

@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :subscription do
-    build_association { :user }
-    build_association { :program }
+    association :user
+    association :program
   end
 end

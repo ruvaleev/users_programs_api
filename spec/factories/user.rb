@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :user do
-    email { FFaker::Internet.email }
+    sequence :email do |n| "#{FFaker::Internet.email}#{n}" end
     name { FFaker::Name.name }
   end
 end

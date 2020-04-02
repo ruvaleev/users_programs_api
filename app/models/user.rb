@@ -7,4 +7,12 @@ class User < ActiveRecord::Base
 
   has_many :subscriptions, dependent: :destroy
   has_many :programs, through: :subscriptions
+
+  def active_programs
+    sql = "SELECT programs.* FROM programs
+                              INNER JOIN subscriptions ON programs.id = subscriptions.program_id
+                              WHERE subscriptions.user_id = #{id} AND subscriptions.active = true".squish
+
+    Program.find_by_sql(sql)
+  end
 end

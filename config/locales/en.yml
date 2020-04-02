@@ -30,4 +30,10 @@
 # available at https://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
+  users:
+    not_found: 'User not found'
+  subscription:
+    already_exists: 'Subscription already exists'
+    not_found: 'Subscription not found'
+  programs:
+    not_found: 'Not found'
