@@ -1,24 +1,30 @@
-# README
+## Installation:
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+### First setup:
 
-Things you may want to cover:
+1) `docker-compose build`
+2) `docker-compose up`
+3) `docker-compose run --rm app rake db:reset` (In alternative terminal tab)
+4) Got to http://localhost:3000/api/swagger/
 
-* Ruby version
+### Regular Run:
 
-* System dependencies
+1) `docker-compose up`
+2) Got to http://localhost:3000/api/swagger/
 
-* Configuration
+### Run specs:
 
-* Database creation
+1) `docker-compose run --rm app rspec spec/`
 
-* Database initialization
+'mysql:5.7' Image should be run. You can check it with command `docker ps`. If in returned list you can't find image 'mysql:5.7' with name like 'users_programs_db_1', you can make next steps:
 
-* How to run the test suite
+1) `docker-compose up`
+2) `docker-compose run --rm app rspec spec/` (In alternative terminal tab)
 
-* Services (job queues, cache servers, search engines, etc.)
 
-* Deployment instructions
 
-* ...
+
+
+
+
+
